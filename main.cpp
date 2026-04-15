@@ -111,7 +111,7 @@ int main(){
     std::string trash;
     sf::VertexArray out_track(sf::LinesStrip);
     sf::VertexArray in_track(sf::LinesStrip);
-    std::string file_path = "track.txt";
+    std::string file_path = "data/track.txt";
     file.open(file_path);
     if(file.is_open()){
         sf::Vector2f pt;
@@ -149,7 +149,7 @@ int main(){
     view.setCenter(sf::Vector2f(0, 0));
 
     CAR rus_car, ham_car;
-    rus_car.set_telemetry("rus_tel.txt"); ham_car.set_telemetry("ham_tel.txt");
+    rus_car.set_telemetry("data/rus_tel.txt"); ham_car.set_telemetry("data/ham_tel.txt");
 
     sf::CircleShape rus_shape(2.f);
     rus_shape.setFillColor(sf::Color(0, 0, 255));

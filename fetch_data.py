@@ -48,7 +48,7 @@ def create_tel_file(lap, file_name):
     x = positions[:, 0].tolist()
     y = positions[:, 1].tolist()
 
-    f = open("build/"+file_name+".txt", "w", encoding="utf-8")
+    f = open("data/"+file_name+".txt", "w", encoding="utf-8")
 
     telemetry_size = len(times)
     f.write(str(telemetry_size)+'\n')
@@ -66,11 +66,11 @@ lapHAM = session.laps.pick_drivers("HAM").pick_fastest()
 create_tel_file(lapRUS, 'rus_tel')
 create_tel_file(lapHAM, 'ham_tel')
 
-kml_file = "australia.kml"
+kml_file = "data/australia.kml"
 _lat, _lon, _angle = -37.84875839569118, 144.97017928051926, 1.4200000000000002
 track_dictionary = kml_to_dict(kml_file, _lat, _lon, _angle)
 
-f = open("build/track.txt", "w", encoding="utf-8")
+f = open("data/track.txt", "w", encoding="utf-8")
 for key in track_dictionary:
     liste_points = track_dictionary[key]
     nb_points = len(liste_points)

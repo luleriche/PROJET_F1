@@ -5,8 +5,8 @@ add_compile_options(-Wall)
 
 find_package(SFML COMPONENTS graphics window system)
 
-file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/data DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
-
 add_executable(${PROJECT_NAME}.out main.cpp)
+
+file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/data DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
 
 target_link_libraries(${PROJECT_NAME}.out PRIVATE sfml-graphics sfml-window sfml-system)
