@@ -22,6 +22,38 @@ struct data_set{
     float track_distance;
 };
 
+struct TRACK{
+    sf::VertexArray in_track;
+    sf::VertexArray out_track;
+
+    void load_from_file(std::string file_path){
+        std::string trash;
+        std::ifstream file;
+        file.open(file_path);
+        if(file.is_open()){
+            in_track.setPrimitiveType(sf::LinesStrip);
+            out_track.setPrimitiveType(sf::LinesStrip);
+            file >> trash;
+            sf::Vector2f pt;
+            int in_nbpts, out_nbpts;
+            file >> in_nbpts;
+            in_track.resize(in_nbpts);
+            for(int i = 0; i < in_nbpts; ++i){
+                file >> in_track[i].position.x >> in_track[i].position.y;
+                in_track[i].color = sf::Color(255, 255, 255);
+            }
+            file >> trash;
+            file >> out_nbpts;
+            out_track.resize(out_nbpts);
+            for(int i = 0; i < out_nbpts; ++i){
+                file >> out_track[i].position.x >> out_track[i].position.y;
+                out_track[i].color = sf::Color(255, 255, 255);
+            }
+        }else
+            std::cout << "Erreur à l'ouverture du fichier de circuit." << std::endl;    
+        }
+};
+
 struct TELEMETRY{
     int size;
     sf::Time * times;
@@ -34,6 +66,7 @@ struct TELEMETRY{
             datas[i].track_distance = datas[i-1].track_distance + distance(datas[i].position, datas[i-1].position);
         }
     }
+
     void load_from_file(std::string file_path){
         std::ifstream file;
         file.open(file_path);
@@ -106,39 +139,14 @@ public:
 };
 
 int main(){
-    std::ifstream file;
+    TRACK my_track;
+    my_track.load_from_file("data/track.txt");
 
-    std::string trash;
-    sf::VertexArray out_track(sf::LinesStrip);
-    sf::VertexArray in_track(sf::LinesStrip);
-    std::string file_path = "data/track.txt";
-    file.open(file_path);
-    if(file.is_open()){
-        sf::Vector2f pt;
-        file >> trash;
-        int in_nbpts, out_nbpts;
-        file >> in_nbpts;
-        in_track.resize(in_nbpts);
-        for(int i = 0; i < in_nbpts; ++i){
-            file >> in_track[i].position.x >> in_track[i].position.y;
-            in_track[i].color = sf::Color(255, 255, 255);
-        }
-        file >> trash;
-        file >> out_nbpts;
-        out_track.resize(out_nbpts);
-        for(int i = 0; i < out_nbpts; ++i){
-            file >> out_track[i].position.x >> out_track[i].position.y;
-            out_track[i].color = sf::Color(255, 255, 255);
-        }
-    }else
-        std::cout << "Erreur à l'ouverture du fichier.";
-
-    
-    std::cout << "LANCEMENT DE L'APP";
-    
     sf::ContextSettings settings;
     settings.antialiasingLevel = 6;
-
+   
+    std::cout << "LANCEMENT DE L'APP";
+    
     sf::RenderWindow window(sf::VideoMode(500, 500), "F1 APP", sf::Style::Default, settings);
     sf::Clock clock;
     
@@ -179,8 +187,8 @@ int main(){
         window.clear();
         window.draw(ham_shape);
         window.draw(rus_shape);
-        window.draw(out_track);
-        window.draw(in_track);
+        window.draw(my_track.in_track);
+        window.draw(my_track.out_track);
         window.display();
         
     }
