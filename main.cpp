@@ -120,52 +120,48 @@ struct TELEMETRY{
     }
 };
 
-class CAR{
+class CAR : public sf::CircleShape{
 private:
     TELEMETRY car_tel;
     sf::Time last_update_time;
 public:
+    CAR(sf::Color color, float radius, std::string tel_file) : sf::CircleShape(radius){
+        this->setFillColor(color);
+        car_tel.load_from_file(tel_file);
+        this->setFillColor(sf::Color(255, 0, 0));
+        this->setOrigin(radius, radius);
+    }
     sf::Vector2f pos;
     float speed;
 
-    void set_telemetry(std::string telemetry_file){
-        car_tel.load_from_file(telemetry_file);
-    }
-
-    void update(sf::Time elapsed_time){
+    void update_for_anim(sf::Time elapsed_time){
         car_tel.set_pos_and_speed_anim(pos, speed, elapsed_time);
+        this->setPosition(pos);
         std::cout << "CAR INFO UPDATED " << pos.x << " " << pos.y << " " << speed << std::endl;
     }
+    
 };
 
 int main(){
     TRACK my_track;
     my_track.load_from_file("data/track.txt");
 
+    CAR rus_car(sf::Color(0, 0, 255), 2.f, "data/rus_tel.txt");
+    CAR ham_car(sf::Color(255, 0, 0), 2.f, "data/ham_tel.txt");
+
     sf::ContextSettings settings;
     settings.antialiasingLevel = 6;
-   
-    std::cout << "LANCEMENT DE L'APP";
-    
     sf::RenderWindow window(sf::VideoMode(500, 500), "F1 APP", sf::Style::Default, settings);
-    sf::Clock clock;
-    
     window.setVerticalSyncEnabled(true);
+   
+    sf::Clock clock;
     sf::View view;
-    sf::Vector2f baseSize(100.f, 100.f);
     view.reset(sf::FloatRect(0.f, 0.f, 100.f, 100.f));
     view.setCenter(sf::Vector2f(0, 0));
 
-    CAR rus_car, ham_car;
-    rus_car.set_telemetry("data/rus_tel.txt"); ham_car.set_telemetry("data/ham_tel.txt");
-
-    sf::CircleShape rus_shape(2.f);
-    rus_shape.setFillColor(sf::Color(0, 0, 255));
-    rus_shape.setOrigin(2.f, 2.f);
-    sf::CircleShape ham_shape(2.f);
-    ham_shape.setFillColor(sf::Color(255, 0, 0));
-    ham_shape.setOrigin(2.f, 2.f);
-
+    sf::Vector2f baseSize(100.f, 100.f);
+    
+    std::cout << "LANCEMENT DE L'APP" << std::endl;
     while( window.isOpen() ){
         sf::Event event;
         while( window.pollEvent(event)){
@@ -173,10 +169,8 @@ int main(){
                 window.close();
         }
         sf::Time elapsed_time = clock.getElapsedTime();
-        rus_car.update(elapsed_time);
-        ham_car.update(elapsed_time);
-        rus_shape.setPosition(rus_car.pos);
-        ham_shape.setPosition(ham_car.pos);
+        rus_car.update_for_anim(elapsed_time);
+        ham_car.update_for_anim(elapsed_time);
         view.setCenter(view.getCenter() + (rus_car.pos-view.getCenter())*0.8f);
 
         float zoomFactor = rus_car.speed / 200.f;
@@ -185,8 +179,8 @@ int main(){
         view.setSize(currentSize + (targetSize - currentSize) * 0.05f);
         window.setView(view);
         window.clear();
-        window.draw(ham_shape);
-        window.draw(rus_shape);
+        window.draw(ham_car);
+        window.draw(rus_car);
         window.draw(my_track.in_track);
         window.draw(my_track.out_track);
         window.display();
